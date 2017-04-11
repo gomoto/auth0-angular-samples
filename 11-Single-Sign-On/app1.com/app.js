@@ -8,6 +8,7 @@
 
   config.$inject = [
     '$httpProvider',
+    'jwtOptionsProvider',
     '$stateProvider',
     'lockProvider',
     '$urlRouterProvider',
@@ -16,6 +17,7 @@
 
   function config(
     $httpProvider,
+    jwtOptionsProvider,
     $stateProvider,
     lockProvider,
     $urlRouterProvider,
@@ -52,6 +54,18 @@
     });
 
     $urlRouterProvider.otherwise('/home');
+
+    // Configure angular-jwt
+    jwtOptionsProvider.config({
+      tokenGetter: [function() {
+        var token = localStorage.getItem('id_token');
+        console.log('angular-jwt token getter', token);
+        return token;
+      }]
+    });
+
+    // Add Authorization header to requests
+    $httpProvider.interceptors.push('jwtInterceptor');
 
     // Log request headers
     $httpProvider.interceptors.push(function() {
