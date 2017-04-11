@@ -35,6 +35,7 @@
     // This method is called from app.run.js
     function registerAuthenticationListener() {
       lock.on('authenticated', function (authResult) {
+        console.log(`authenticated. setting token in localStorage ${authResult.idToken}`);
         localStorage.setItem('id_token', authResult.idToken);
         authManager.authenticate();
 
@@ -53,13 +54,14 @@
         console.log(err);
       });
     }
-    
+
     function getProfileDeferred() {
       return deferredProfile.promise;
     }
 
     function checkAuthOnRefresh() {
         var token = localStorage.getItem('id_token');
+        console.log('checkAuthOnRefresh token:', token);
         if (token) {
           if (!jwtHelper.isTokenExpired(token)) {
             if (!$rootScope.isAuthenticated) {
@@ -68,6 +70,7 @@
           }
         } else {
           angularAuth0.getSSOData(function (err, data) {
+            console.log('sso data:', data);
             if (!err && data.sso) {
               angularAuth0.signin({
                 scope: 'openid name picture',

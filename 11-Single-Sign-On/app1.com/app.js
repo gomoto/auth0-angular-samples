@@ -9,6 +9,7 @@
   config.$inject = ['$stateProvider', 'lockProvider', '$urlRouterProvider', 'angularAuth0Provider'];
 
   function config($stateProvider, lockProvider, $urlRouterProvider, angularAuth0Provider) {
+    console.log('app.config');
 
     $stateProvider
       .state('home', {
