@@ -2,7 +2,7 @@
 
 This example shows how to ***Login*** using Single Sign On
 
-You can read a more about client-side SSO in the Single Page Applications [here](https://auth0.com/docs/sso/single-page-apps-sso). 
+You can read a more about client-side SSO in the Single Page Applications [here](https://auth0.com/docs/sso/single-page-apps-sso).
 
 ## Getting Started
 
@@ -29,7 +29,7 @@ cd app1.com
 bower install
 
 # Run the first application
-serve
+serve --port 3000
 
 # Go to the second application
 cd ../app2.com
@@ -63,11 +63,11 @@ Click `Logout from your Auth0 application` button on the example's `Home` page t
 (function () {
 
   function run($rootScope, authService, lock, $timeout) {
-  
+
     ...
 
     $timeout(authService.checkAuthOnRefresh);
-    
+
   }
 
 })();
@@ -105,11 +105,11 @@ Click `Logout from your Auth0 application` button on the example's `Home` page t
     }
 
     return {
-      
+
       checkAuthOnRefresh: checkAuthOnRefresh,
-      
+
       ...
-      
+
     }
   }
 })();
@@ -140,7 +140,7 @@ Click `Logout from your Auth0 application` button on the example's `Home` page t
 
 The **Logout** link in the navbar logs the user out from the individual app, but to log the user out of SSO, you must call `auth0Angular.logout`.
 
-> **Note:** You must set the URL that is allowed to be redirected to after logout in your [Auth0 advanced settings](https://manage.auth0.com/#/account/advanced). 
+> **Note:** You must set the URL that is allowed to be redirected to after logout in your [Auth0 advanced settings](https://manage.auth0.com/#/account/advanced).
 
 ```js
 // components/home/home.controller.js
