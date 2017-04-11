@@ -6,9 +6,21 @@
     .module('app', ['auth0.auth0', 'auth0.lock', 'angular-jwt', 'ui.router'])
     .config(config);
 
-  config.$inject = ['$stateProvider', 'lockProvider', '$urlRouterProvider', 'angularAuth0Provider'];
+  config.$inject = [
+    '$httpProvider',
+    '$stateProvider',
+    'lockProvider',
+    '$urlRouterProvider',
+    'angularAuth0Provider'
+  ];
 
-  function config($stateProvider, lockProvider, $urlRouterProvider, angularAuth0Provider) {
+  function config(
+    $httpProvider,
+    $stateProvider,
+    lockProvider,
+    $urlRouterProvider,
+    angularAuth0Provider
+  ) {
     console.log('app.config');
 
     $stateProvider
@@ -40,6 +52,16 @@
     });
 
     $urlRouterProvider.otherwise('/home');
+
+    // Log request headers
+    $httpProvider.interceptors.push(function() {
+      return {
+        request: function(config) {
+          console.log('$http request headers:', config.headers);
+          return config;
+        }
+      };
+    });
   }
 
 })();

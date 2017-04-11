@@ -6,7 +6,12 @@
     .module('app')
     .run(run);
 
-  run.$inject = ['$rootScope', 'authService', 'lock', '$timeout'];
+  run.$inject = [
+    '$rootScope',
+    'authService',
+    'lock',
+    '$timeout'
+  ];
 
   function run($rootScope, authService, lock, $timeout) {
     console.log('app.run');
