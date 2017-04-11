@@ -5,11 +5,11 @@
     <p>You are not yet authenticated. <a ui-sref="login">Log in.</a></p>
   </div>
   <div class="text-center" ng-if="isAuthenticated">
-    <h2>Welcome, {{ vm.profile.nickname }}</h2>
+    <h2>Welcome, {{ vm.profile.nickname }}, to app1</h2>
     <img ng-src="{{ vm.profile.picture }}">
   </div>
   <div class="text-center">
-    <h2><a href="http://localhost:3001">Open the application #2</a></h2>
+    <h3><a href="http://localhost:3001">Go to other app</a></h3>
     <button ng-if="isAuthenticated" class="btn btn-danger" ng-click="vm.logoutFromAuth0()"> Logout from your Auth0 application</button>
   </div>
 </div>
