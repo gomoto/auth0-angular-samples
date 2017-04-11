@@ -10,6 +10,6 @@
   </div>
   <div class="text-center">
     <h2><a href="http://localhost:3000">Open the application #1</a></h2>
-    <button class="btn btn-danger" ng-click="vm.logoutFromAuth0()">Logout from your Auth0 application</button>
+    <button ng-if="isAuthenticated" class="btn btn-danger" ng-click="vm.logoutFromAuth0()">Logout from your Auth0 application</button>
   </div>
 </div>
