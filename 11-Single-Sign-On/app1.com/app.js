@@ -10,6 +10,7 @@
     '$httpProvider',
     'jwtOptionsProvider',
     '$stateProvider',
+    '$locationProvider',
     'lockProvider',
     '$urlRouterProvider',
     'angularAuth0Provider'
@@ -19,11 +20,14 @@
     $httpProvider,
     jwtOptionsProvider,
     $stateProvider,
+    $locationProvider,
     lockProvider,
     $urlRouterProvider,
     angularAuth0Provider
   ) {
     console.log('app.config');
+
+    $locationProvider.html5Mode(true);
 
     $stateProvider
       .state('home', {
