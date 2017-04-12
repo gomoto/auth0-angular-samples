@@ -59,44 +59,11 @@
       return deferredProfile.promise;
     }
 
-    function checkAuthOnRefresh() {
-        var token = localStorage.getItem('id_token');
-        console.log('checkAuthOnRefresh token:', token);
-        if (token) {
-          if (!jwtHelper.isTokenExpired(token)) {
-            if (!$rootScope.isAuthenticated) {
-              authManager.authenticate();
-            }
-          }
-        } else {
-          angularAuth0.getSSOData(function (err, data) {
-            console.log('sso data:', data);
-            if (!err && data.sso) {
-              angularAuth0.signin({
-                scope: 'openid name picture',
-                responseType: 'token'
-              });
-            }
-          });
-        }
-    }
-
+    // signin redirects to auth0.com
     function syncWithAuth0() {
       console.log('sync with Auth0');
       angularAuth0.getSSOData(function(err, data) {
-        if (data.sso) {
-          console.log('Single-sign-on session is active');
-          console.log('These are the active clients:', data.sessionClients);
-          var isThisClientLoggedIn = data.sessionClients && data.sessionClients.indexOf(AUTH0_CLIENT_ID) > -1;
-          console.log('Is this client logged in?', isThisClientLoggedIn);
-          if (!isThisClientLoggedIn) {
-            // Can we do this async to prevent double-load?
-            angularAuth0.signin({
-              scope: 'openid name picture',
-              responseType: 'token'
-            });
-          }
-        } else {
+        if (!data.sso) {
           console.log('I am logged out of single-sign-on session');
           var token = localStorage.getItem('id_token');
           if (token) {
@@ -107,7 +74,32 @@
             scope: 'openid name picture',
             responseType: 'token'
           });
+          return;
         }
+        console.log('Single-sign-on session is active');
+        console.log('These are the active clients:', data.sessionClients);
+        var isThisClientLoggedIn = data.sessionClients && data.sessionClients.indexOf(AUTH0_CLIENT_ID) > -1;
+        console.log('Is this client logged in?', isThisClientLoggedIn);
+        if (!isThisClientLoggedIn) {
+          // Can we do this async to prevent double-load?
+          angularAuth0.signin({
+            scope: 'openid name picture',
+            responseType: 'token'
+          });
+          return;
+        }
+        var token = localStorage.getItem('id_token');
+        var isTokenExpired = jwtHelper.isTokenExpired(token);
+        console.log('Is token expired?', isTokenExpired);
+        if (isTokenExpired) {
+          // Can we do this async to prevent double-load?
+          angularAuth0.signin({
+            scope: 'openid name picture',
+            responseType: 'token'
+          });
+          return;
+        }
+        authManager.authenticate();
       });
     }
 
@@ -116,7 +108,6 @@
       login: login,
       logout: logout,
       registerAuthenticationListener: registerAuthenticationListener,
-      checkAuthOnRefresh: checkAuthOnRefresh,
       getProfileDeferred: getProfileDeferred
     }
   }
