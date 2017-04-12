@@ -81,7 +81,38 @@
         }
     }
 
+    function syncWithAuth0() {
+      console.log('sync with Auth0');
+      angularAuth0.getSSOData(function(err, data) {
+        if (data.sso) {
+          console.log('Single-sign-on session is active');
+          console.log('These are the active clients:', data.sessionClients);
+          var isThisClientLoggedIn = data.sessionClients && data.sessionClients.indexOf(AUTH0_CLIENT_ID) > -1;
+          console.log('Is this client logged in?', isThisClientLoggedIn);
+          if (!isThisClientLoggedIn) {
+            // Can we do this async to prevent double-load?
+            angularAuth0.signin({
+              scope: 'openid name picture',
+              responseType: 'token'
+            });
+          }
+        } else {
+          console.log('I am logged out of single-sign-on session');
+          var token = localStorage.getItem('id_token');
+          if (token) {
+            console.log('But local storage still has a token!', token);
+            localStorage.removeItem('id_token');
+          }
+          angularAuth0.signin({
+            scope: 'openid name picture',
+            responseType: 'token'
+          });
+        }
+      });
+    }
+
     return {
+      syncWithAuth0,
       login: login,
       logout: logout,
       registerAuthenticationListener: registerAuthenticationListener,

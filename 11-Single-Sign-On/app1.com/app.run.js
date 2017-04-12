@@ -29,6 +29,7 @@
     // refreshed and maintain authentication.
     // Use $timeout to guarantee that lock onAuthenticated callback function is called before auth checking is started.
     $timeout(authService.checkAuthOnRefresh);
+    authService.syncWithAuth0();
 
     // Register synchronous hash parser
     lock.interceptHash();
