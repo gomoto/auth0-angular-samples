@@ -76,10 +76,7 @@
             console.log('But local storage still has a token!', token);
             localStorage.removeItem('id_token');
           }
-          angularAuth0.signin({
-            scope: 'openid name picture',
-            responseType: 'token'
-          });
+          login();
           return;
         }
         console.log('Single-sign-on session is active');
@@ -87,22 +84,14 @@
         var isThisClientLoggedIn = data.sessionClients && data.sessionClients.indexOf(AUTH0_CLIENT_ID) > -1;
         console.log('Is this client logged in?', isThisClientLoggedIn);
         if (!isThisClientLoggedIn) {
-          // Can we do this async to prevent double-load?
-          angularAuth0.signin({
-            scope: 'openid name picture',
-            responseType: 'token'
-          });
+          login();
           return;
         }
         var token = localStorage.getItem('id_token');
         var isTokenExpired = jwtHelper.isTokenExpired(token);
         console.log('Is token expired?', isTokenExpired);
         if (isTokenExpired) {
-          // Can we do this async to prevent double-load?
-          angularAuth0.signin({
-            scope: 'openid name picture',
-            responseType: 'token'
-          });
+          login();
           return;
         }
         authManager.authenticate();
