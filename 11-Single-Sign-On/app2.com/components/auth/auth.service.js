@@ -17,13 +17,20 @@
       deferredProfile.resolve(userProfile);
     }
 
+    // Redirects to auth0.com
     function login() {
-      lock.show();
+      angularAuth0.login({
+        scope: 'openid name picture',
+        responseType: 'token'
+      });
     }
 
-    // Logging out just requires removing the user's
-    // id_token and profile
+    // Redirects to auth0.com
     function logout() {
+      angularAuth0.logout({
+        client_id: AUTH0_CLIENT_ID,
+        returnTo: `${window.location.protocol}//${window.location.host}`
+      });
       deferredProfile = $q.defer();
       localStorage.removeItem('id_token');
       localStorage.removeItem('profile');
@@ -59,7 +66,6 @@
       return deferredProfile.promise;
     }
 
-    // signin redirects to auth0.com
     function syncWithAuth0() {
       console.log('sync with Auth0');
       angularAuth0.getSSOData(function(err, data) {
