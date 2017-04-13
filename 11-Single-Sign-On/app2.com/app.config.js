@@ -11,7 +11,6 @@
     'jwtOptionsProvider',
     '$stateProvider',
     '$locationProvider',
-    'lockProvider',
     '$urlRouterProvider',
     'angularAuth0Provider'
   ];
@@ -21,7 +20,6 @@
     jwtOptionsProvider,
     $stateProvider,
     $locationProvider,
-    lockProvider,
     $urlRouterProvider,
     angularAuth0Provider
   ) {
@@ -42,14 +40,6 @@
         templateUrl: 'components/login/login.html',
         controllerAs: 'vm'
       });
-
-    lockProvider.init({
-      clientID: AUTH0_CLIENT_ID,
-      domain: AUTH0_DOMAIN,
-      options: {
-        _idTokenVerification: false
-      }
-    });
 
     // Initialization for the angular-auth0 library
     angularAuth0Provider.init({
