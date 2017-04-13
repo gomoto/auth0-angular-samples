@@ -48,6 +48,9 @@
     function setUserToken() {
       console.log('sync with Auth0');
       // After Auth0 authenticates user, it redirects with tokens in the URL.
+      // NOTE: hash is only available until first location change/state change,
+      // which happens as soon as the run block finshes. This means parse hash
+      // cannot happen asynchronously.
       const parsedHash = angularAuth0.parseHash(window.location.hash);
       if (parsedHash) {
         console.log('Auth0 tokens are in the url. That means we were redirected from Auth0.');
