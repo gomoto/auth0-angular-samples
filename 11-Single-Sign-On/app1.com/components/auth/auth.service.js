@@ -9,13 +9,8 @@
   authService.$inject = ['$rootScope', 'angularAuth0', 'authManager', 'jwtHelper', '$q'];
 
   function authService($rootScope, angularAuth0, authManager, jwtHelper, $q) {
-
-    var userProfile = JSON.parse(localStorage.getItem('profile')) || null;
-    var deferredProfile = $q.defer();
-
-    if (userProfile) {
-      deferredProfile.resolve(userProfile);
-    }
+    // Remember user profile after first fetch.
+    var userProfile = null;
 
     // Redirects to auth0.com
     function login() {
@@ -31,16 +26,10 @@
         client_id: AUTH0_CLIENT_ID,
         returnTo: `${window.location.protocol}//${window.location.host}`
       });
-      deferredProfile = $q.defer();
+      userProfile = null;
       localStorage.removeItem('id_token');
       localStorage.removeItem('access_token');
-      localStorage.removeItem('profile');
       authManager.unauthenticate();
-      userProfile = null;
-    }
-
-    function getProfileDeferred() {
-      return deferredProfile.promise;
     }
 
     // Return a promise that resolves once token is set in local storage.
@@ -116,22 +105,50 @@
       setUserToken()
       .then(function() {
         authManager.authenticate();
-        const accessToken = localStorage.getItem('access_token');
-        angularAuth0.getUserInfo(accessToken, function(error, profile) {
-          localStorage.setItem('profile', JSON.stringify(profile));
-          deferredProfile.resolve(profile);
-        });
+        $rootScope.$emit('authenticated');
       })
       .catch(function() {
         console.error('An error occurred while authenticating');
       });
     }
 
+    // Call callback once authenticated.
+    function onceAuthenticated(callback) {
+      if (authManager.isAuthenticated()) {
+        callback();
+        return;
+      }
+      $rootScope.$on('authenticated', () => {
+        callback();
+      });
+    }
+
+    // Return a promise that resolves with the user profile.
+    function getUserProfile() {
+      if (userProfile) {
+        return $q.resolve(userProfile);
+      }
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) {
+        return $q.reject('No access token');
+      }
+      const deferred = $q.defer();
+      angularAuth0.getUserInfo(accessToken, function(error, profile) {
+        if (error) {
+          deferred.reject(error);
+        }
+        userProfile = profile;
+        deferred.resolve(profile);
+      });
+      return deferred.promise;
+    }
+
     return {
       syncWithAuth0,
       login: login,
       logout: logout,
-      getProfileDeferred: getProfileDeferred
+      onceAuthenticated,
+      getUserProfile
     }
   }
 })();

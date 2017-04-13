@@ -13,8 +13,13 @@
     var vm = this;
     vm.authService = authService;
 
-    authService.getProfileDeferred().then(function (profile) {
-      vm.profile = profile;
+    vm.profile = null;
+    authService.onceAuthenticated(() => {
+      authService.getUserProfile()
+      .then(function (profile) {
+        console.log('Setting user profile');
+        vm.profile = profile;
+      });
     });
 
     vm.logoutFromAuth0 = function() {
