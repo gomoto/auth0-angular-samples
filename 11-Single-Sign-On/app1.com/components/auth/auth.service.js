@@ -33,6 +33,7 @@
       });
       deferredProfile = $q.defer();
       localStorage.removeItem('id_token');
+      localStorage.removeItem('access_token');
       localStorage.removeItem('profile');
       authManager.unauthenticate();
       userProfile = null;
@@ -66,18 +67,20 @@
       return deferredProfile.promise;
     }
 
-    function syncWithAuth0() {
+    // Return a promise that resolves once token is set in local storage.
+    function setUserToken() {
       console.log('sync with Auth0');
       // After Auth0 authenticates user, it redirects with tokens in the URL.
       const parsedHash = angularAuth0.parseHash(window.location.hash);
       if (parsedHash) {
         console.log('Auth0 tokens are in the url. That means we were redirected from Auth0.');
         console.log(parsedHash);
-        const token = parsedHash.idToken;
-        localStorage.setItem('id_token', token);
-        authManager.authenticate();
-        return;
+        localStorage.setItem('id_token', parsedHash.idToken);
+        localStorage.setItem('access_token', parsedHash.accessToken);
+        return $q.resolve();
       }
+      // Convert callback to a promise using $q deferred API.
+      const deferred = $q.defer();
       angularAuth0.getSSOData(function(err, data) {
         if (!data.sso) {
           console.log('I am logged out of single-sign-on session');
@@ -108,8 +111,21 @@
           login();
           return;
         }
-        // Token is already set
+        // Token in local storage is valid.
+        deferred.resolve();
+      });
+      return deferred.promise;
+    }
+
+    function syncWithAuth0() {
+      setUserToken()
+      .then(function() {
         authManager.authenticate();
+        const accessToken = localStorage.getItem('access_token');
+        angularAuth0.getUserInfo(accessToken, function(error, profile) {
+          localStorage.setItem('profile', JSON.stringify(profile));
+          deferredProfile.resolve(profile);
+        });
       });
     }
 
