@@ -33,12 +33,6 @@
         controller: 'HomeController',
         templateUrl: 'components/home/home.html',
         controllerAs: 'vm'
-      })
-      .state('login', {
-        url: '/login',
-        controller: 'LoginController',
-        templateUrl: 'components/login/login.html',
-        controllerAs: 'vm'
       });
 
     // Initialization for the angular-auth0 library

@@ -24,7 +24,6 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li ng-if="!isAuthenticated"><a ui-sref="login">Log In</a></li>
               <li ng-if="isAuthenticated"><a ui-sref="home" ng-click="authService.logout()">Log Out</a></li>
               <li><a ui-sref="home">Home</a></li>
             </ul>
@@ -45,7 +44,6 @@
     <script type="text/javascript" src="app.run.js"></script>
     <script type="text/javascript" src="app.config.js"></script>
     <script type="text/javascript" src="components/home/home.controller.js"></script>
-    <script type="text/javascript" src="components/login/login.controller.js"></script>
     <script type="text/javascript" src="components/auth/auth.service.js"></script>
   </body>
 </html>
