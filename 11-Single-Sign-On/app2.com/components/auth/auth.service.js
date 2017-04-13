@@ -58,6 +58,9 @@
       // Convert callback to a promise using $q deferred API.
       const deferred = $q.defer();
       angularAuth0.getSSOData(function(err, data) {
+        if (err) {
+          deferred.reject(err);
+        }
         // If user is not logged in to any app, log in.
         if (!data.sso) {
           console.log('I am logged out of single-sign-on session');
@@ -118,6 +121,9 @@
           localStorage.setItem('profile', JSON.stringify(profile));
           deferredProfile.resolve(profile);
         });
+      })
+      .catch(function() {
+        console.error('An error occurred while authenticating');
       });
     }
 
