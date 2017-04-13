@@ -68,6 +68,16 @@
 
     function syncWithAuth0() {
       console.log('sync with Auth0');
+      // After Auth0 authenticates user, it redirects with tokens in the URL.
+      const parsedHash = angularAuth0.parseHash(window.location.hash);
+      if (parsedHash) {
+        console.log('Auth0 tokens are in the url. That means we were redirected from Auth0.');
+        console.log(parsedHash);
+        const token = parsedHash.idToken;
+        localStorage.setItem('id_token', token);
+        authManager.authenticate();
+        return;
+      }
       angularAuth0.getSSOData(function(err, data) {
         if (!data.sso) {
           console.log('I am logged out of single-sign-on session');
@@ -88,12 +98,17 @@
           return;
         }
         var token = localStorage.getItem('id_token');
-        var isTokenExpired = jwtHelper.isTokenExpired(token);
-        console.log('Is token expired?', isTokenExpired);
-        if (isTokenExpired) {
+        if (!token) {
+          console.log('No token in local storage.');
           login();
           return;
         }
+        if (jwtHelper.isTokenExpired(token)) {
+          console.log('Token expired.');
+          login();
+          return;
+        }
+        // Token is already set
         authManager.authenticate();
       });
     }

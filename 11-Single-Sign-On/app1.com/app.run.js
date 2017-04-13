@@ -22,7 +22,7 @@
 
     // Register the authentication listener that is
     // set up in auth.service.js
-    authService.registerAuthenticationListener();
+    // authService.registerAuthenticationListener();
 
     authService.syncWithAuth0();
 
