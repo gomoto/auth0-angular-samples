@@ -58,6 +58,7 @@
       // Convert callback to a promise using $q deferred API.
       const deferred = $q.defer();
       angularAuth0.getSSOData(function(err, data) {
+        // If user is not logged in to any app, log in.
         if (!data.sso) {
           console.log('I am logged out of single-sign-on session');
           var token = localStorage.getItem('id_token');
@@ -70,6 +71,8 @@
         }
         console.log('Single-sign-on session is active');
         console.log('These are the active clients:', data.sessionClients);
+
+        // If user is not logged in to this app, log in.
         var isThisClientLoggedIn = data.sessionClients && data.sessionClients.indexOf(AUTH0_CLIENT_ID) > -1;
         console.log('Is this client logged in?', isThisClientLoggedIn);
         if (!isThisClientLoggedIn) {
@@ -82,11 +85,24 @@
           login();
           return;
         }
+
+        // If token is unreadable, get a new one.
+        try {
+          jwtHelper.decodeToken(token);
+        }
+        catch (e) {
+          console.log('Cannot decode token');
+          login();
+          return;
+        }
+
+        // If token is expired, get a new one.
         if (jwtHelper.isTokenExpired(token)) {
           console.log('Token expired.');
           login();
           return;
         }
+
         // Token in local storage is valid.
         deferred.resolve();
       });
