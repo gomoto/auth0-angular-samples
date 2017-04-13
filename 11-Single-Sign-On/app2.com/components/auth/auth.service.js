@@ -6,9 +6,21 @@
     .module('app')
     .service('authService', authService);
 
-  authService.$inject = ['$rootScope', 'angularAuth0', 'authManager', 'jwtHelper', '$q'];
+  authService.$inject = [
+    '$rootScope',
+    'angularAuth0',
+    'authManager',
+    'jwtHelper',
+    '$q'
+  ];
 
-  function authService($rootScope, angularAuth0, authManager, jwtHelper, $q) {
+  function authService(
+    $rootScope,
+    angularAuth0,
+    authManager,
+    jwtHelper,
+    $q
+  ) {
     // Remember user profile after first fetch.
     var userProfile = null;
 
@@ -144,11 +156,11 @@
     }
 
     return {
-      syncWithAuth0,
-      login: login,
-      logout: logout,
+      getUserProfile,
+      login,
+      logout,
       onceAuthenticated,
-      getUserProfile
+      syncWithAuth0
     }
   }
 })();
